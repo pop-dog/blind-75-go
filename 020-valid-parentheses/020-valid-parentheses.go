@@ -1,31 +1,11 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
 
-type Stack[T any] []T
-
-func NewStack[T any]() *Stack[T] {
-	return &Stack[T]{}
-}
-
-func (s *Stack[T]) Push(value T) {
-	*s = append(*s, value)
-}
-
-func (s *Stack[T]) Pop() (T, bool) {
-	var zero T
-	if len(*s) == 0 {
-		return zero, false
-	}
-	index := len(*s) - 1
-	value := (*s)[index]
-	*s = (*s)[:index]
-	return value, true
-}
-
-func (s *Stack[T]) IsEmpty() bool {
-	return len(*s) == 0
-}
+	data_structures "github.com/pop-dog/blind-75-go/data-structures"
+)
 
 func main() {
 	test_cases := []string{"()", "()[]{}", "(])", "([])", "", "([]", ")]"}
@@ -37,24 +17,51 @@ func main() {
 	}
 }
 
+func isParenthesis(r rune) bool {
+	return strings.ContainsRune("()[]{}", r)
+}
+
+func isOpenParenthesis(r rune) bool {
+	return strings.ContainsRune("([{", r)
+}
+
+func isCloseParenthesis(r rune) bool {
+	return strings.ContainsRune(")]}", r)
+}
+
+func isValidPair(l rune, r rune) bool {
+	return l == '(' && r == ')' ||
+		l == '[' && r == ']' ||
+		l == '{' && r == '}'
+}
+
 func isValid(s string) bool {
-	parens := NewStack[rune]()
+	parens := data_structures.NewStack[rune]()
 
-	for _, c := range s {
-		parens.Push(c)
-	}
-
-	for range 10 {
-		r, has_value := parens.Pop()
-		if has_value {
-			fmt.Println(r)
-			if r == '(' {
-				fmt.Println("This is an open parenthesis!")
+	for _, r := range s {
+		// Ignore anything that is not a parenthesis
+		if !isParenthesis(r) {
+			continue
+		}
+		// 1. If we have an "open" parenthesis, push to the stack
+		if isOpenParenthesis(r) {
+			parens.Push(r)
+			continue
+		}
+		// 2. If we have a "closed" parenthesis, pop from stack and compare
+		if isCloseParenthesis(r) {
+			l, is_value := parens.Pop()
+			if !is_value {
+				// The stack was empty! INVALID!
+				return false
 			}
-		} else {
-			fmt.Println("Stack is empty!")
+			if !isValidPair(l, r) {
+				// Parentheses do not match! INVALID!
+				return false
+			}
 		}
 	}
 
-	return false
+	// Final check: Do we hae any leftover "open" parentheses? If so, we have orphans :(
+	return parens.IsEmpty() // If empty, we GOOD :)
 }
