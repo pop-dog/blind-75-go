@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	data_structures "github.com/pop-dog/blind-75-go/data-structures"
+	"github.com/pop-dog/blind-75-go/dstructs/stack"
 )
 
 func main() {
@@ -36,7 +36,7 @@ func isValidPair(l rune, r rune) bool {
 }
 
 func isValid(s string) bool {
-	parens := data_structures.NewStack[rune]()
+	parens := stack.New[rune]()
 
 	for _, r := range s {
 		// Ignore anything that is not a parenthesis
