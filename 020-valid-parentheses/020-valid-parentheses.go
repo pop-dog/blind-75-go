@@ -50,11 +50,11 @@ func isValid(s string) bool {
 		}
 		// 2. If we have a "closed" parenthesis, pop from stack and compare
 		if isCloseParenthesis(r) {
-			l, is_value := parens.Pop()
-			if !is_value {
-				// The stack was empty! INVALID!
+			if parens.IsEmpty() {
+				// There is no open paren! Invalid!
 				return false
 			}
+			l := parens.Pop()
 			if !isValidPair(l, r) {
 				// Parentheses do not match! INVALID!
 				return false

@@ -48,7 +48,7 @@ func isPalindrome(s string) bool {
 	}
 	// Second half:	pop from stack and compare
 	for _, rr := range shalf {
-		lr, _ := rns.Pop()
+		lr := rns.Pop()
 		if lr != rr {
 			return false
 		}

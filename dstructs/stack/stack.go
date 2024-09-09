@@ -10,29 +10,21 @@ func (s *Stack[T]) Push(value T) {
 	*s = append(*s, value)
 }
 
-func (s *Stack[T]) Pop() (T, bool) {
-	var zero T
-	if len(*s) == 0 {
-		return zero, false
-	}
+func (s *Stack[T]) Pop() T {
 	index := len(*s) - 1
 	value := (*s)[index]
 	*s = (*s)[:index]
-	return value, true
+	return value
 }
 
 func (s *Stack[T]) IsEmpty() bool {
 	return len(*s) == 0
 }
 
-func (s *Stack[T]) Peek() (T, bool) {
-	var zero T
-	if len(*s) == 0 {
-		return zero, false
-	}
+func (s *Stack[T]) Peek() T {
 	index := len(*s) - 1
 	value := (*s)[index]
-	return value, true
+	return value
 }
 
 func (s *Stack[T]) Clear() {

@@ -30,6 +30,11 @@ func main() {
 	mergedList.Remove(mergedList.Back())
 
 	fmt.Println("mergedList: ", listToString(mergedList))
+
+	doubled := mergedList.Map(func(el *list.Element[int], args ...any) int {
+		return el.Value * 2
+	})
+	fmt.Println("doubled: ", listToString(doubled))
 }
 
 func mergeTwoLists(l1 *list.List[int], l2 *list.List[int]) *list.List[int] {

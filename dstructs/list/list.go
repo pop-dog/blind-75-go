@@ -1,7 +1,5 @@
 package list
 
-import "errors"
-
 type Element[T any] struct {
 	Value T
 	next  *Element[T]
@@ -38,22 +36,20 @@ func (l *List[T]) Init() *List[T] {
 	return New[T]()
 }
 
-// Validate that mark is an element of the list
-func (l *List[T]) contains(mark *Element[T]) bool {
-	if mark == nil {
-		return false
+func (l *List[T]) Map(callback func(el *Element[T], args ...any) T, args ...any) *List[T] {
+	newList := New[T]()
+	for e := l.front; e != nil; e = e.next {
+		newList.PushBack(callback(e, args))
 	}
-	for el := l.front; el != nil; el = el.next {
-		if el == mark {
-			return true // Found it!!
-		}
-	}
-	// We never found the element; it's not in the list!
-	return false
+	return newList
 }
 
 // Shared internal function to insert a value after an element
 func (l *List[T]) insertAfter(v T, mark *Element[T]) *Element[T] {
+	if mark == nil {
+		// mark must be a non-nil element in the list
+		return nil
+	}
 	// Allocate a new element and assign it the value
 	newNode := &Element[T]{}
 	newNode.Value = v
@@ -74,15 +70,16 @@ func (l *List[T]) insertAfter(v T, mark *Element[T]) *Element[T] {
 }
 
 func (l *List[T]) InsertAfter(v T, mark *Element[T]) *Element[T] {
-	if !l.contains(mark) {
-		return nil
-	}
 	newNode := l.insertAfter(v, mark)
 	return newNode
 }
 
 // Shared internal function to insert a value before an element
 func (l *List[T]) insertBefore(v T, mark *Element[T]) *Element[T] {
+	if mark == nil {
+		// mark must be a non-nil element in the list
+		return nil
+	}
 	// Allocate a new element and assign it the value
 	newNode := &Element[T]{}
 	newNode.Value = v
@@ -102,9 +99,6 @@ func (l *List[T]) insertBefore(v T, mark *Element[T]) *Element[T] {
 }
 
 func (l *List[T]) InsertBefore(v T, mark *Element[T]) *Element[T] {
-	if !l.contains(mark) {
-		return nil
-	}
 	newNode := l.insertBefore(v, mark)
 	return newNode
 }
@@ -113,18 +107,18 @@ func (l *List[T]) Len() int {
 	return l.count
 }
 
-func (l *List[T]) Remove(e *Element[T]) (T, error) {
-	var zero T
-	if !l.contains(e) {
-		return zero, errors.New("Element is not in list")
-	}
+func (l *List[T]) Remove(e *Element[T]) T {
 	l.remove(e)
 	l.count--
-	return e.Value, nil
+	return e.Value
 }
 
 // Shared internal function to remove an element
 func (l *List[T]) remove(e *Element[T]) {
+	if e == nil {
+		// e must be non-nil element in the list
+		return
+	}
 	oldPrev := e.prev
 	oldNext := e.next
 
@@ -143,7 +137,7 @@ func (l *List[T]) remove(e *Element[T]) {
 }
 
 func (l *List[T]) MoveAfter(e, mark *Element[T]) {
-	if !l.contains(e) || !l.contains(mark) || e == mark {
+	if e == mark {
 		return
 	}
 	// Remove the element from its current position, then re-insert after target
@@ -152,7 +146,7 @@ func (l *List[T]) MoveAfter(e, mark *Element[T]) {
 }
 
 func (l *List[T]) MoveBefore(e, mark *Element[T]) {
-	if !l.contains(e) || !l.contains(mark) || e == mark {
+	if e == mark {
 		return
 	}
 	// Remove the element from its current position, then re-insert before target
