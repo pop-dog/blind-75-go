@@ -23,18 +23,11 @@ func main() {
 	fmt.Println("Result: ", listToString(mergedList))
 	fmt.Println("Total length: ", mergedList.Len())
 
-	mergedList.PushBackList(l1)
-	fmt.Println("Pushed l1 to back of merged: ", listToString(mergedList))
+	ints := []int{1, 2, 3, 4}
 
-	mergedList.Remove(mergedList.Front())
-	mergedList.Remove(mergedList.Back())
-
-	fmt.Println("mergedList: ", listToString(mergedList))
-
-	doubled := mergedList.Map(func(el *list.Element[int], args ...any) int {
-		return el.Value * 2
-	})
-	fmt.Println("doubled: ", listToString(doubled))
+	fmt.Println(ints)
+	ints = append(ints[:3], ints[4:]...)
+	fmt.Println(ints)
 }
 
 func mergeTwoLists(l1 *list.List[int], l2 *list.List[int]) *list.List[int] {
